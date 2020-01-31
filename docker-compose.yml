@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  database:
+    image: mysql:5.7
+    container_name: database
+    restart: always 
+    volumes:
+      - ./mysqldata/:/var/lib/mysql/
+    ports:
+      - "3309:3309"
+  web:
+    image: php:7.3-apache
+    container_name: web
+    restart: always
+    depends_on:
+      - database
+    volumes:
+      - ./www/:/var/www/html/
+      - ./logs/:/var/log/apache2/
+    ports:
+      - "80:80" 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    links: 
+      - database
+    ports: 
+      - 85:80  
+    environment:  
+      PMA_HOST: database
